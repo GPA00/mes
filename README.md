@@ -23,6 +23,7 @@
 * 演示地址【Vue2 + element-ui】：<http://dashboard.yudao.iocoder.cn>
 * 启动文档：<https://cloud.iocoder.cn/quick-start/>
 * 视频教程：<https://cloud.iocoder.cn/video/>
+* **🚀 MES 容器化部署与避坑宝典**：详见 [docker/README.md](file:///d:/mes/mes/docker/README.md)（含一键启动脚本、端口规避、多模块打包排错等全量复盘）
 
 ## 🐰 版本说明
 

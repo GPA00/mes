@@ -53,3 +53,10 @@ application-my.yaml
 /yudao-ui-app/unpackage/
 .DS_Store
 **/.DS_Store
+
+######################################################################
+# Docker Deployment Data & Secrets
+docker/mysql/data/
+docker/redis/data/
+docker/backend/*.jar
+docker/frontend/dist/

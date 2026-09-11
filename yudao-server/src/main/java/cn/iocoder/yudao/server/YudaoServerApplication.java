@@ -15,6 +15,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SuppressWarnings("SpringComponentScan") // 忽略 IDEA 无法识别 ${yudao.info.base-package}
 @SpringBootApplication(scanBasePackages = {"${yudao.info.base-package}.server", "${yudao.info.base-package}.module"},
         excludeName = {
+
+            "org.springframework.ai.model.chat.client.autoconfigure.ChatClientAutoConfiguration"
+
             // RPC 相关
 //            "org.springframework.cloud.openfeign.FeignAutoConfiguration",
 //            "cn.iocoder.yudao.module.system.framework.rpc.config.RpcConfiguration"
