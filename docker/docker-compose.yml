@@ -1,0 +1,101 @@
+# ===================================================================
+# MES 制造执行系统全栈容器编排文件
+# 包含服务：mes-mysql (8.0)、mes-redis (7-alpine)、mes-backend (Java 17)、mes-frontend (Nginx)
+# ===================================================================
+
+networks:
+  mes-net:
+    name: mes-net
+    driver: bridge
+
+services:
+  # -----------------------------------------------------------------
+  # 1. 核心数据库服务 (MySQL 8.0)
+  # -----------------------------------------------------------------
+  mes-mysql:
+    image: mysql:8.0
+    container_name: mes-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      TZ: "Asia/Shanghai"
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./mysql/data:/var/lib/mysql
+    networks:
+      - mes-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # -----------------------------------------------------------------
+  # 2. 高速缓存服务 (Redis 7)
+  # -----------------------------------------------------------------
+  mes-redis:
+    image: redis:7-alpine
+    container_name: mes-redis
+    restart: always
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./redis/data:/data
+    networks:
+      - mes-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -----------------------------------------------------------------
+  # 3. 后端业务服务 (Spring Boot 3.5.x + JDK 17)
+  # -----------------------------------------------------------------
+  mes-backend:
+    image: yudao-server:latest
+    container_name: mes-backend
+    restart: always
+    environment:
+      TZ: "Asia/Shanghai"
+      JAVA_OPTS: "${JAVA_OPTS}"
+      SPRING_PROFILES_ACTIVE: "local"
+      SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_URL: "jdbc:mysql://mes-mysql:3306/${MYSQL_DATABASE}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true"
+      SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_USERNAME: "root"
+      SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      SPRING_DATA_REDIS_HOST: "mes-redis"
+      SPRING_DATA_REDIS_PORT: 6379
+      # 注：Redis 容器未配置 requirepass 时，严禁传入空密码环境变量，否则 Redisson 会尝试发送空 AUTH 并报错
+      FLOWABLE_DATABASE_SCHEMA_UPDATE: "false"
+    ports:
+      - "${BACKEND_PORT}:48080"
+    volumes:
+      - ./backend/logs:/root/logs
+    depends_on:
+      mes-mysql:
+        condition: service_healthy
+      mes-redis:
+        condition: service_healthy
+    networks:
+      - mes-net
+
+  # -----------------------------------------------------------------
+  # 4. 前端管理控制台 (Vue 3 + Nginx，对外端口 1228)
+  # -----------------------------------------------------------------
+  mes-frontend:
+    image: yudao-ui:latest
+    container_name: mes-frontend
+    restart: always
+    ports:
+      - "${FRONTEND_PORT}:80"
+    depends_on:
+      - mes-backend
+    networks:
+      - mes-net
