@@ -32,7 +32,7 @@ echo [1] 直接使用现有产物构建 Docker 镜像 (推荐，无需等待打�
 echo [2] 重新执行完整前端编译打包 (npm run build:prod，约需2分钟)
 echo -------------------------------------------------------------------
 set USER_CHOICE=1
-set /p USER_CHOICE="请输入选项编号 [1/2] (直接按回车默认选 1): "
+set /p USER_CHOICE="请输入选项编号 [1/2] (直接按回车默认选择 1): "
 
 if "%USER_CHOICE%"=="2" goto :do_build
 goto :copy_dist
@@ -93,7 +93,7 @@ if not exist "%TARGET_DIST%\index.html" (
     echo [错误] 静态文件同步失败，未在 docker\frontend\dist 中找到 index.html!
     goto :fail
 )
-echo [成功] 前端静态资源已成功同步到 docker\frontend\dist 目录!
+echo [成功] 前端静态资源已成功同步至 docker\frontend\dist 目录!
 
 echo.
 echo [3/3] 正在使用 Docker 构建前端镜像 yudao-ui:latest...

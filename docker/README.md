@@ -8,7 +8,8 @@
 
 | 服务名称 | 对应容器名 | 容器内部端口 | 宿主机映射端口 | 作用说明 |
 |---|---|---|---|---|
-| **前端 Web 控制台** | `mes-frontend` | 80 | **`1228`** | Vue 3 生产静态界面，反向代理 `/admin-api/` |
+| **PC 前端 Web 控制台** | `mes-frontend` | 80 | **`1228`** | Vue 3 生产静态界面，反向代理 `/admin-api/` |
+| **移动端/PDA 终端** | `mes-uniapp` | 80 | **`1229`** | Uniapp H5 移动扫码与工位报工，反向代理 `/admin-api/` |
 | **后端 API 服务** | `mes-backend` | 48080 | `48080` | Spring Boot 3 + JDK 17 单体服务 (`yudao-server`) |
 | **核心数据库** | `mes-mysql` | 3306 | **`3307`** (防冲突) | MySQL 8.0 实例，挂载定制表结构与持久化数据 |
 | **缓存与会话** | `mes-redis` | 6379 | `6379` | Redis 7.x 实例，挂载 AOF/RDB 持久化缓存 |
@@ -16,8 +17,6 @@
 ---
 
 ## 二、首次上线前的关键准备（迁移现有数据）
-
-### 1. 迁移与同步 MySQL 表结构（一键工具）
 由于你已经在开发库中对 MES 表结构做过修改：
 - **一键导出最新数据库**：
   - **Windows**：双击运行 `docker/mysql/export.bat`（或执行 `docker/mysql/export.bat`），支持从当前 Docker 容器或本地 3306 导出，脚本内部采用原生二进制提取，彻底杜绝 PowerShell/CMD 终端乱码。
@@ -54,13 +53,22 @@
   ```
 > 脚本会自动执行 Maven 编译打包，将提取出的 `yudao-server.jar` 打包进基于 `eclipse-temurin:17-jre-alpine` 的轻量级容器（已内置上海时区与验证码字体库）。
 
-### 2. 前端镜像打包（`yudao-ui:latest`）
+### 2. PC 前端镜像打包（`yudao-ui:latest`）
 - **Windows 环境**：直接双击运行 `docker/frontend/build.bat`。
 - **Linux 环境**：
   ```bash
   chmod +x docker/frontend/build.sh
   ./docker/frontend/build.sh
   ```
+
+### 3. 移动端/PDA 镜像打包（`yudao-ui-uniapp:latest`）
+- **Windows 环境**：直接双击运行 `docker/uniapp/build.bat`（或在 `yudao-ui-admin-uniapp` 根目录下运行 `deploy.bat`）。
+- **Linux 环境**：
+  ```bash
+  chmod +x docker/uniapp/build.sh
+  ./docker/uniapp/build.sh
+  ```
+> 脚本会自动检测 `dist/build/h5` 产物，或调用 `pnpm run build:h5:prod` 执行生产编译并打包成基于 Nginx 的移动端轻量容器。
 
 ---
 

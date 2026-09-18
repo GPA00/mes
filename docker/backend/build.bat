@@ -18,7 +18,7 @@ REM 命令行参数支持
 if /i "%1"=="--rebuild" goto :do_build
 if /i "%1"=="-r" goto :do_build
 if /i "%1"=="--skip-build" goto :copy_jar
-if /i "%1"=="-s" goto :copy_jar
+if /i "%1"=="-s" goto :copy_dist
 
 REM 如果不存在现成的 jar 包，直接执行 Maven 编译打包
 if not defined SRC_JAR goto :do_build
@@ -68,7 +68,7 @@ if %errorlevel% equ 0 goto :run_mvn
 echo.
 echo [提示] 系统环境变量中未检测到 mvn 命令。
 echo [错误] 重新编译打包需要 Maven 环境。
-echo 请确保已配置 MAVEN_HOME / PATH，或在 IntelliJ IDEA 的 Maven 窗口中执行 package 打包！
+echo 请确保已配置 MAVEN_HOME / PATH，或在 IntelliJ IDEA 的 Maven 窗口中执行 package 打包。
 goto :fail
 
 :run_mvn

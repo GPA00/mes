@@ -99,3 +99,18 @@ services:
       - mes-backend
     networks:
       - mes-net
+
+  # -----------------------------------------------------------------
+  # 5. 移动端/PDA 执行终端 (Uniapp H5 + Nginx，对外端口 1229)
+  # -----------------------------------------------------------------
+  mes-uniapp:
+    image: yudao-ui-uniapp:latest
+    container_name: mes-uniapp
+    restart: always
+    ports:
+      - "${UNIAPP_PORT}:80"
+    depends_on:
+      - mes-backend
+    networks:
+      - mes-net
+
