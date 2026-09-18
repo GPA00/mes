@@ -50,9 +50,26 @@ rebel.xml
 
 application-my.yaml
 
-/yudao-ui-app/unpackage/
 .DS_Store
 **/.DS_Store
+
+######################################################################
+# Frontend / Node / UniApp
+node_modules/
+**/node_modules/
+.pnpm-store/
+**/.pnpm-store/
+dist/
+**/dist/
+dist-*/
+**/dist-*/
+unpackage/
+**/unpackage/
+/yudao-ui-app/unpackage/
+.eslintcache
+pnpm-debug.log*
+yarn-error.log*
+npm-debug.log*
 
 ######################################################################
 # Docker Deployment Data & Secrets
