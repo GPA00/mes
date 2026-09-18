@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>关于公司自研MES系统上线落地与服务器选型建议的综合汇报</title>
+    <style>
+        @media print {
+            body {
+                padding: 0;
+                background-color: #fff;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "SimSun", sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 50px;
+            background-color: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            color: #1a252f;
+            margin-bottom: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #34495e;
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        h2 {
+            font-size: 19px;
+            color: #1b4f72;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            border-left: 5px solid #2980b9;
+            padding-left: 12px;
+        }
+
+        h3 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-top: 22px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        p {
+            text-indent: 2em;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            text-align: justify;
+        }
+
+        .summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dcdfe6;
+            border-left: 5px solid #e67e22;
+            padding: 16px 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .summary-box h3 {
+            margin-top: 0;
+            color: #d35400;
+        }
+
+        .summary-box p {
+            text-indent: 0;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eaeded;
+            color: #1a252f;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        .highlight {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .diagram-box {
+            background-color: #f4f6f7;
+            border: 1px solid #d5dbdb;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .action-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .action-button:hover {
+            background-color: #1f618d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="action-button no-print" onclick="window.print()">🖨️ 打印为 PDF / 纸质文档</button>
+
+    <h1>关于公司自研MES系统上线落地与基础设施选型的综合汇报</h1>
+
+    <div class="header-meta">
+        <div><strong>汇报部门：</strong>数字化与信息化项目组</div>
+        <div><strong>主报：</strong>公司总经理、核心管理层</div>
+        <div><strong>日期：</strong>2026年9月</div>
+    </div>
+
+    <div class="summary-box">
+        <h3>【执行摘要】（管理层 1 分钟快速决策概览）</h3>
+        <p><strong>1. 业务破局与阶段成果：</strong> 公司目前规模约 50 人，处于伺服制造业务高速扩张期。针对“德米萨 ERP 仅能管进销存、车间生产处于黑盒、工序追溯全靠人工催问”的痛点，自研轻量级 MES 系统核心开发工作已进入收尾阶段，打通了“订单接收、工单排产、车间扫码报工、装配质量防呆、ERP数据无侵入同步”全流程。</p>
+        <p><strong>2. 现存运行环境重大隐患（严禁老电脑混跑）：</strong> 目前运行德米萨 ERP 的电脑为 2015 年前后的普通办公机（Win7，仅 8GB 内存），算力已至极限。<strong>绝不能将新 MES 强行塞入混跑</strong>，否则一旦内存耗尽死机，将导致现有的德米萨 ERP 瘫痪，引发全厂开单、出库与生产全面停摆。</p>
+        <p><strong>3. 基础设施选型（真实严密核算）：</strong> 结合 50 人规模并发、伺服成品 SN 高频扫码与数据安全需求，<strong>强烈建议采纳【本地高性能商用静音工作站 + 双固态硬盘镜像热备 + 1500VA 在线式 UPS 电源】方案，一次性买断预算约 9,800 元</strong>：</p>
+        <ul>
+            <li><strong>比云服务器省大钱：</strong> 租用腾讯云同等企业算力（8核16G/10M带宽），首年约 7,000 元，次年起正常续费约 1.2 万元/年，<strong>三年累计支出超 3.2 万元</strong>。本地方案仅需其 1/3 成本。</li>
+            <li><strong>生产生死线（断网不停产）：</strong> 系统 100% 运行在厂区内网，扫码响应低于 50 毫秒；即使外网光纤被挖断，车间扫码打印照常作业。</li>
+            <li><strong>数据零丢失容灾：</strong> 采用“双硬盘实时镜像（RAID 1）”，坏一块盘生产不中断；配 UPS 备用电源防电网跳闸损坏数据库。</li>
+        </ul>
+    </div>
+
+    <h2>一、 公司现状与数字化破局背景</h2>
+    <h3>1.1 伺服精密制造的业务特征</h3>
+    <p>伺服电机及驱动系统由定子、转子、高精度编码器、驱动控制板等精密部件装配而成。随着公司人数达到 50 人并持续扩张，面临三大核心瓶颈：</p>
+    <ul>
+        <li><strong>一机一码追溯严苛：</strong> 每个伺服成品均有唯一出厂序列号（SN），出厂后核心元器件批次、质检测试数据需保留 1~3 年追溯记录，以应对严格的客户复查；</li>
+        <li><strong>工序链条长且复杂：</strong> 涉及金工、绕线、嵌线、组装、老化测试及包装等多道工序；</li>
+        <li><strong>插单频繁与交期压力：</strong> 进度依赖口头催问，管理层无法直观掌控产线实时负荷。</li>
+    </ul>
+
+    <h3>1.2 现存资产（德米萨 ERP）的价值与局限</h3>
+    <p>德米萨 ERP 承担着进销存与财务基本盘，但存在“数据出不来（缺乏开放 API，导出靠人工 Excel）”与“车间管不到（无法下沉到扫码枪与工位平板）”的局限。自研 MES 定位于车间“前线执行大脑”，与德米萨 ERP 优势互补、数据打通。</p>
+
+    <h2>二、 自研轻量级 MES 平台建设成果</h2>
+    <p>采用成熟工业级开源底座定制开发，<strong>为公司直接节省了外部商业 MES 采购费用 15~35 万元</strong>，目前已就绪四大核心能力：</p>
+
+    <div class="diagram-box">
+【车间制造执行 MES】── 生产工单排产 ── 工位条码扫码报工 ── 伺服成品 SN 全链路防呆
+【质检与仓储协同】  ── 来料 IQC 检验 ── 过程 IPQC 巡检  ── 扫码领料与成品入库
+【德米萨 ERP 自动化】 ── Python/RPA 自动化无侵入数据管道（自动抓取订单与物料清单）
+【电子看板与知识库】 ── 车间工单电子看板 ── 伺服技术图纸库 ── Flowable 审批工作流</div>
+
+    <ul>
+        <li><strong>德米萨 ERP 无侵入自动化打通：</strong> 通过后台自动化服务，每天定时/准实时自动抽取 ERP 订单与 BOM，清洗后注入 MES 排产，无侵入、零破坏风险；</li>
+        <li><strong>条码化全流程防呆：</strong> 支持手持扫码枪作业，扫工单、扫物料，物料批次不符系统自动报警拦截；组装完毕扫描绑定 SN 码，防错防漏；</li>
+        <li><strong>生产进度透明化看板：</strong> 办公室与车间大屏实时显示工单进度、完工率与质检良率，彻底终结催问历史。</li>
+    </ul>
+
+    <h2>三、 为什么绝不能在现有老电脑上强行上线？</h2>
+    <h3>3.1 现有机器现状</h3>
+    <p>经现场摸排，目前承载德米萨 ERP 的电脑为 2015 年前后的普通办公机（Windows 7 系统，i5 处理器，<strong>仅 8GB 运行内存</strong>），日常承载 ERP 已处于常态化负荷。</p>
+
+    <h3>3.2 50人规模混跑内存击穿测算</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>运行组件</th>
+                <th>单独运行最低内存要求</th>
+                <th>如果在老电脑强行混跑的结果</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Win7 系统底层 + 德米萨 ERP</strong></td>
+                <td>约 3.5 GB ~ 4.5 GB</td>
+                <td>原电脑长期处于 50% 负荷</td>
+            </tr>
+            <tr>
+                <td><strong>自研 MES 业务服务 (Java 17)</strong></td>
+                <td>最低 3.0 GB（50人并发）</td>
+                <td>累加后内存占用直接逼近 7.5GB</td>
+            </tr>
+            <tr>
+                <td><strong>MySQL 8.0 数据库缓冲池</strong></td>
+                <td>最低 4.0 GB（数十万条追溯记录）</td>
+                <td><span class="highlight">总需求超 12GB，8G 物理内存瞬间被打爆</span></td>
+            </tr>
+            <tr>
+                <td><strong>Redis 缓存与 ERP 同步脚本</strong></td>
+                <td>约 1.5 GB</td>
+                <td>触发系统剧烈换页、磁盘狂读死机</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong class="highlight">灾难性后果警示：</strong> 一旦内存耗尽导致老电脑死机蓝屏，不仅新系统不可用，<strong>正在运行的德米萨 ERP 将一同崩溃瘫痪，引发全厂开单、发货停摆的重大事故</strong>。生产系统与财务进销存必须实行物理隔离、专机专用！</p>
+
+    <h2>四、 基础设施选型与真实费用严密测算（50人规模）</h2>
+    <h3>4.1 为什么制造企业 90% 以上选择本地局域网？</h3>
+    <ol>
+        <li><strong>断网不停产（生产生死线）：</strong> 工业区外网光纤被挖断时有发生。若部署在云端，外网一断全厂扫码停顿、全线停产；而本地内网运行，即使断网，车间扫码与打印 100% 照常作业。</li>
+        <li><strong>扫码零延迟：</strong> 工人每天扫码数千次，内网响应低于 10 毫秒（“滴”一声瞬间出结果）；公网受带宽抖动影响常有数百毫秒卡顿，工人极其抵触。</li>
+        <li><strong>工艺数据安全：</strong> 伺服电机配方与测试曲线属于商业秘密，数据物理保存在厂内，杜绝外部泄密隐患。</li>
+    </ol>
+
+    <h3>4.2 三年总账对比（TCO 投资回报分析）</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>对比维度</th>
+                <th>方案一：本地商用工作站 + UPS（强烈推荐）</th>
+                <th>方案二：戴尔企业级塔式服务器</th>
+                <th>方案三：腾讯云企业级 CVM</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>核心硬件配置</strong></td>
+                <td>i7-14700 (20核) / 64G DDR5 / 双1T NVMe SSD (RAID1) / 4T 备份机械盘 / 1500VA 在线式 UPS</td>
+                <td>至强 E 系列 / 64G ECC 内存 / 双盘阵列 / iDRAC 管理卡 / 双电源</td>
+                <td>8核 16G / 10M 独享公网带宽 / 200G 高性能云硬盘</td>
+            </tr>
+            <tr>
+                <td><strong>第一年支出</strong></td>
+                <td><strong>约 9,800 元</strong> (一次性买断)</td>
+                <td>约 14,000 元 (一次性买断)</td>
+                <td>约 7,000 元 (首年优惠)</td>
+            </tr>
+            <tr>
+                <td><strong>第二年支出</strong></td>
+                <td><span class="success">0 元</span></td>
+                <td><span class="success">0 元</span></td>
+                <td>约 12,000 元 (原价续费)</td>
+            </tr>
+            <tr>
+                <td><strong>第三年支出</strong></td>
+                <td><span class="success">0 元</span></td>
+                <td><span class="success">0 元</span></td>
+                <td>约 12,000 元 (原价续费)</td>
+            </tr>
+            <tr>
+                <td><strong>三年总支出 (TCO)</strong></td>
+                <td><span class="success">约 9,800 元</span></td>
+                <td>约 14,000 元</td>
+                <td><span class="highlight">约 31,000 元</span></td>
+            </tr>
+            <tr>
+                <td><strong>生产断网风险</strong></td>
+                <td><strong>零风险</strong>（厂内局域网秒级闭环）</td>
+                <td><strong>零风险</strong>（厂内局域网闭环）</td>
+                <td><span class="highlight">高风险</span>（外网抖动或断纤即停线）</td>
+            </tr>
+            <tr>
+                <td><strong>机房要求</strong></td>
+                <td><strong>极静音设计</strong>，可放办公室或弱电箱</td>
+                <td>风扇噪音略大，需独立设备柜</td>
+                <td>无本地硬件</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>财务测算结论：</strong> 采购一台顶级本地主机（约 9,800 元），仅相当于云厂商大半年的续费钱！从第二年起就是纯省钱，<strong>三年累计为公司直接节省超 2 万元现金流</strong>，且性能足以支撑公司平稳扩张至 150 人规模。</p>
+
+    <h2>五、 下一步落地推进与申请事项</h2>
+    <p>为了稳步推进，建议分三阶段落地：</p>
+    <div class="diagram-box">
+【阶段一：硬件采购与部署（1周）】 ──► 采购主机与 UPS 到货，部署自动化服务，完成双盘镜像与数据定时冷备
+【阶段二：单条产线示范试点（2周）】 ──► 选定 1 条常规伺服电机产线与成品仓，驻场辅导工人扫码，跑通闭环
+【阶段三：全厂推广与深化（1-2月）】 ──► 推广至所有工序，开启电子看板实时预警，逐步接入工艺技术文档库</div>
+
+    <h3>明确申请事项：</h3>
+    <ol>
+        <li><strong>硬件预算审批：</strong> 申请批准采购<strong>方案一【高性能商用工作站 + 双盘 RAID1 镜像 + 1500VA UPS 电源】</strong>，预算金额约 <strong>9,800 ~ 10,500 元（含税专票，含 3 年原厂上门服务）</strong>。<br>
+        <em>（若公司目前有近期闲置的更高级别办公台式机，也可由网管协助评估调拨，仅需申请加装 64G 内存与 UPS 电源，进一步为公司节省资金）。</em></li>
+        <li><strong>首条试点产线选定：</strong> 建议选定 1 条常规伺服组装产线及配套成品仓作为首期示范试点，2 周内跑通业务闭环。</li>
+    </ol>
+
+    <div style="text-align: right; margin-top: 40px; color: #555;">
+        <p><strong>报告提交人：</strong>数字化与信息化项目组</p>
+        <p><strong>呈送：</strong>公司总经理 / 核心管理层 审阅批示</p>
+    </div>
+
+</body>
+</html>
